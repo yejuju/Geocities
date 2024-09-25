@@ -32,8 +32,12 @@ directionalLight.position.set(0, 5, 5);  // Position the light to illuminate the
 scene.add(directionalLight);
 
 // Add ambient light for softer illumination
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);  // Add soft ambient light
+const ambientLight = new THREE.AmbientLight(0xffffff, 1);  // Add soft ambient light
 scene.add(ambientLight);
+
+// Load texture using TextureLoader
+const textureLoader = new THREE.TextureLoader();
+const appleTexture = textureLoader.load('./images/texture/blue.jpeg');
 
 // Load apple-1.obj using OBJLoader
 const loader = new OBJLoader();
@@ -41,10 +45,20 @@ let appleModel;
 
 loader.load('./3dobject/apple-1.obj', function (object) {
     appleModel = object;
+
+    // Apply the texture to the model's material
+    object.traverse(function (child) {
+        if (child.isMesh) {
+            child.material = new THREE.MeshStandardMaterial({
+                map: appleTexture  // Apply the loaded texture to the material
+            });
+        }
+    });
+
     console.log("Model loaded:", appleModel);
     scene.add(appleModel);
     appleModel.position.set(-50, 0, 0);  // Set initial position (X-axis starts at -50, Y and Z are 0)
-    appleModel.scale.set(0.1, 0.1, 0.1);  // Scale down the model
+    appleModel.scale.set(0.08, 0.08, 0.08);  // Scale down the model
 },
     function (xhr) {
         console.log((xhr.loaded / xhr.total * 100) + '% loaded');  // Progress logging
